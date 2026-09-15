@@ -23,9 +23,19 @@ st.markdown("""
 }
 
 .hero-title {
+    color: #FFD700 !important;
+    text-shadow: 0 0 12px rgba(255, 215, 0, 0.35);
+}
+.hero-subtitle-am {
+    color: #FDE047 !important;
+}
+.param-header {
+    color: #F59E0B !important;
+}
+.hero-title {
     font-size: 2.1rem;
     font-weight: 900;
-    color: #2dd4bf;
+    color: #FFD700;
     letter-spacing: -0.5px;
     line-height: 1.2;
     margin: 0.4rem 0 0.2rem 0;
@@ -35,7 +45,7 @@ st.markdown("""
 .hero-subtitle-am {
     font-size: 1.25rem;
     font-weight: 800;
-    color: #6ee7b7;
+    color: #FDE047;
     margin-bottom: 0.5rem;
 }
 
@@ -267,7 +277,7 @@ with tab1:
         <div style="font-size: 0.85rem; font-weight: 800; color: #94a3b8; letter-spacing: 1.5px; text-transform: uppercase;">PREDICTED EXAM BENCHMARK</div>
         <div class="benchmark-score-val">{final_score} <span>/ 100</span></div>
         <div class="benchmark-tier-text">Identified Tier: {tier_title} ({tier_desc})</div>
-        <div style="font-size: 1.3rem; font-weight: 800; color: #2dd4bf; margin-top: 1.2rem; margin-bottom: 0.8rem; border-top: 1px solid #334155; padding-top: 1rem;">
+        <div style="font-size: 1.3rem; font-weight: 800; color: #FFD700; margin-top: 1.2rem; margin-bottom: 0.8rem; border-top: 1px solid #334155; padding-top: 1rem;">
             💡 Data-Driven Actionable Interventions (ተግባራዊ የምክር ሃሳቦች)
         </div>
         {advice_html}
@@ -373,3 +383,4 @@ with tab2:
                 else:
                     st.error(f"❌ አልተመለሰም (Incorrect). ትክክለኛ መልስ: **{item['ans']}** | ማብራሪያ: {item['exp']}")
             st.markdown("---")
+
