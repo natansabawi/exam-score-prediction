@@ -3,6 +3,7 @@ import joblib
 import numpy as np
 import pandas as pd
 import streamlit as st
+from PIL import Image
 
 st.set_page_config(
     page_title="Ethiopian Giftedness and Talent Development Center",
@@ -12,48 +13,36 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# HIGH-CONTRAST CUSTOM CSS & HERO STYLING
+# HIGH-CONTRAST PRODUCTION CSS
 # -----------------------------------------------------------------------------
 st.markdown("""
 <style>
-/* 1. Global Dark Theme Background & Text */
 .stApp {
     background-color: #0b1120;
     color: #f8fafc;
 }
 
-/* 2. Hero Section Header Typography */
 .hero-title {
-    font-size: 2.2rem;
+    font-size: 2.1rem;
     font-weight: 900;
     color: #2dd4bf;
     letter-spacing: -0.5px;
     line-height: 1.2;
-    margin: 0.5rem 0 0.2rem 0;
+    margin: 0.4rem 0 0.2rem 0;
     text-transform: uppercase;
 }
 
 .hero-subtitle-am {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: #6ee7b7;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.5rem;
 }
 
 .hero-desc {
     font-size: 1rem;
     color: #cbd5e1;
-    margin-bottom: 1.5rem;
-}
-
-/* 3. Three Parameter Card Containers */
-div[data-testid="stVerticalBlock"] > div.param-card {
-    background-color: #111827;
-    border: 1px solid #1f2937;
-    border-radius: 12px;
-    padding: 1.5rem;
     margin-bottom: 1rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .param-header {
@@ -66,7 +55,6 @@ div[data-testid="stVerticalBlock"] > div.param-card {
     gap: 0.5rem;
 }
 
-/* 4. Action Button: Forced High Contrast */
 div.stButton > button,
 button[kind="primary"],
 button[data-testid="baseButton-secondary"],
@@ -93,13 +81,6 @@ button[data-testid="baseButton-primary"] * {
     font-weight: 800 !important;
 }
 
-div.stButton > button:hover {
-    background-color: #14b8a6 !important;
-    background-image: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
-    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.6) !important;
-}
-
-/* 5. Result Benchmark & Intervention Styling */
 .benchmark-container {
     background-color: #0f172a;
     border-left: 6px solid #f59e0b;
@@ -109,7 +90,6 @@ div.stButton > button:hover {
     margin-bottom: 2rem;
     box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
-
 .benchmark-container.high { border-left-color: #ef4444; }
 .benchmark-container.moderate { border-left-color: #f59e0b; }
 .benchmark-container.accel { border-left-color: #10b981; }
@@ -121,13 +101,11 @@ div.stButton > button:hover {
     line-height: 1.1;
     margin: 0.3rem 0;
 }
-
 .benchmark-score-val span {
     font-size: 1.6rem;
     color: #64748b;
     font-weight: 600;
 }
-
 .benchmark-tier-text {
     font-size: 1.25rem;
     font-weight: 700;
@@ -153,51 +131,48 @@ div.stButton > button:hover {
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# HERO SECTION (EXACT LAYOUT AS IN SCREENSHOT)
+# IMAGE RESOLUTION HELPERS (Handles both Linux Cloud & Local Windows Paths)
 # -----------------------------------------------------------------------------
-hero_col_left, hero_col_right = st.columns([1.3, 1])
+def load_img(name):
+    candidate_paths = [
+        os.path.join("app", "assets", name),
+        os.path.join("assets", name),
+        name
+    ]
+    for p in candidate_paths:
+        if os.path.exists(p):
+            try:
+                return Image.open(p)
+            except Exception:
+                pass
+    return None
 
-with hero_col_left:
-    # EGATE Square Badge Emblem
-    st.markdown("""
-    <div style="background: #ffffff; width: 110px; height: 110px; border-radius: 12px; padding: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-        <svg viewBox="0 0 100 100" width="95" height="95" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50 15 C45 25, 30 35, 20 48" stroke="#0ea5e9" stroke-width="4" stroke-linecap="round"/>
-            <path d="M50 15 C55 25, 70 35, 80 48" stroke="#0ea5e9" stroke-width="4" stroke-linecap="round"/>
-            <path d="M50 15 C42 28, 38 42, 32 55" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round"/>
-            <path d="M50 15 C58 28, 62 42, 68 55" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round"/>
-            <path d="M50 15 L50 60" stroke="#0d9488" stroke-width="5" stroke-linecap="round"/>
-            <circle cx="20" cy="50" r="4" fill="#0ea5e9"/>
-            <circle cx="80" cy="50" r="4" fill="#0ea5e9"/>
-            <circle cx="32" cy="57" r="4" fill="#8b5cf6"/>
-            <circle cx="68" cy="57" r="4" fill="#8b5cf6"/>
-            <circle cx="50" cy="62" r="5" fill="#0d9488"/>
-            <circle cx="50" cy="15" r="4" fill="#f59e0b"/>
-            <text x="50" y="76" font-size="5.5" font-weight="bold" fill="#0f172a" text-anchor="middle" font-family="sans-serif">ETHIOPIAN GIFTEDNESS AND</text>
-            <text x="50" y="83" font-size="5.5" font-weight="bold" fill="#0f172a" text-anchor="middle" font-family="sans-serif">TALENT DEVELOPMENT CENTER</text>
-            <text x="50" y="91" font-size="5" font-weight="bold" fill="#0d9488" text-anchor="middle" font-family="sans-serif">የኢትዮጵያ ተሰጥኦና ተውህቦ ማበልጸጊያ ማዕከል</text>
-        </svg>
-    </div>
-    """, unsafe_allow_html=True)
-    
+img_logo = load_img("logo.png")
+img_hero = load_img("hero.png")
+
+# -----------------------------------------------------------------------------
+# HERO SECTION
+# -----------------------------------------------------------------------------
+col_hero_left, col_hero_right = st.columns([1.3, 1])
+
+with col_hero_left:
+    if img_logo:
+        st.image(img_logo, width=120)
+    else:
+        st.write("🎓 **EGATE**")
+        
     st.markdown('<div class="hero-title">ETHIOPIAN GIFTEDNESS AND TALENT DEVELOPMENT CENTER</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-subtitle-am">የኢትዮጵያ ተሰጥኦና ተውህቦ ማበልጸጊያ ማዕከል</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-desc">Intelligent Predictive Modeling & National Exam Diagnostic Practice Module.</div>', unsafe_allow_html=True)
 
-with hero_col_right:
-    # Student photograph banner
-    st.markdown("""
-    <div style="display: flex; justify-content: flex-end;">
-        <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1000&auto=format&fit=crop" 
-             style="width: 100%; max-height: 230px; object-fit: cover; border-radius: 16px; border: 1px solid #1f2937; box-shadow: 0 10px 25px rgba(0,0,0,0.5);" 
-             alt="EGATE High-Performing Students">
-    </div>
-    """, unsafe_allow_html=True)
+with col_hero_right:
+    if img_hero:
+        st.image(img_hero, use_container_width=True)
 
 st.write("")
 
 # -----------------------------------------------------------------------------
-# PIPELINE LOADING / DETERMINISTIC FALLBACK
+# PIPELINE LOADING
 # -----------------------------------------------------------------------------
 MODEL_PATH = "models/exam_score_prediction_pipeline.joblib"
 pipeline = None
@@ -207,22 +182,18 @@ if os.path.exists(MODEL_PATH):
     except Exception:
         pipeline = None
 
-# -----------------------------------------------------------------------------
-# TWO TABS: PREDICTOR & 60-QUESTION DIAGNOSTIC BANK
-# -----------------------------------------------------------------------------
 tab1, tab2 = st.tabs([
     "🎓 Machine Learning Score Predictor", 
     "📑 Grade 12 National Exam Practice (60 Questions)"
 ])
 
+# -----------------------------------------------------------------------------
+# TAB 1: PREDICTOR
+# -----------------------------------------------------------------------------
 with tab1:
     col_a, col_b, col_c = st.columns(3)
-    
-    # CARD 1: ACADEMIC BEHAVIORS
     with col_a:
-        st.markdown("""
-        <div class="param-header">📚 Academic Behaviors</div>
-        """, unsafe_allow_html=True)
+        st.markdown('<div class="param-header">📚 Academic Behaviors</div>', unsafe_allow_html=True)
         hours = st.slider("Weekly Study Hours (የጥናት ሰዓት)", 1, 50, 18)
         attendance = st.slider("Attendance Rate % (የትምህርት ቤት ገጽታ)", 40, 100, 82)
         prev_scores = st.slider("Previous Cumulative Score % (ያለፈው ውጤት)", 30, 100, 68)
@@ -230,11 +201,8 @@ with tab1:
         parental_inv = st.selectbox("Parental Involvement", ["Medium", "High", "Low"])
         access_res = st.selectbox("Resource Access", ["Medium", "High", "Low"])
 
-    # CARD 2: WELLBEING & FOCUS
     with col_b:
-        st.markdown("""
-        <div class="param-header">🧠 Wellbeing & Focus</div>
-        """, unsafe_allow_html=True)
+        st.markdown('<div class="param-header">🧠 Wellbeing & Focus</div>', unsafe_allow_html=True)
         sleep = st.slider("Daily Sleep Hours (የእንቅልፍ ሰዓት)", 4, 12, 6)
         phys_act = st.slider("Physical Activity (Days / Week)", 0, 7, 3)
         motivation = st.selectbox("Motivation Level", ["Medium", "High", "Low"])
@@ -242,11 +210,8 @@ with tab1:
         peer = st.selectbox("Peer Environment", ["Positive", "Neutral", "Negative"])
         extra = st.selectbox("Extracurricular Activities", ["Yes", "No"])
 
-    # CARD 3: INSTITUTIONAL CONTEXT
     with col_c:
-        st.markdown("""
-        <div class="param-header">🏫 Institutional Context</div>
-        """, unsafe_allow_html=True)
+        st.markdown('<div class="param-header">🏫 Institutional Context</div>', unsafe_allow_html=True)
         teacher = st.selectbox("Teacher Quality Rating", ["Medium", "High", "Low"])
         school_type = st.selectbox("School Administration", ["Public", "Private"])
         learning_dis = st.selectbox("Special Learning Support Needs", ["No", "Yes"])
@@ -256,8 +221,6 @@ with tab1:
         family_income = st.selectbox("Family Income Tier", ["Medium", "High", "Low"])
 
     st.markdown("<br>", unsafe_allow_html=True)
-    
-    # ACTION BUTTON: HIGH CONTRAST
     run_btn = st.button("⚡ Run Predictive Assessment & Generate Strategy", key="run_strategy_btn")
 
     input_data = pd.DataFrame([{
@@ -312,7 +275,7 @@ with tab1:
     """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# TAB 2: FULL 60-QUESTION GRADE 12 ESSLCE DIAGNOSTIC BANK
+# TAB 2: EXACT 60-QUESTION GRADE 12 ESSLCE DIAGNOSTIC BANK (12 PER SUBJECT)
 # -----------------------------------------------------------------------------
 with tab2:
     st.subheader("📑 Grade 12 National Exam Practice Bank (60 Questions)")
