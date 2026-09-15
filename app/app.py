@@ -137,6 +137,37 @@ button[data-testid="baseButton-primary"] * {
 .advice-row.danger { border-left-color: #ef4444; }
 .advice-row.info { border-left-color: #38bdf8; }
 .advice-row.success { border-left-color: #10b981; }
+/* Force visibility for all input labels (Study Hours, Attendance, etc.) */
+div[data-testid="stWidgetLabel"] label,
+div[data-testid="stWidgetLabel"] p,
+label[data-testid="stWidgetLabel"],
+.stSlider label,
+.stSelectbox label,
+.stRadio label {
+    color: #FFD700 !important; /* Bright Gold */
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.3px !important;
+}
+
+/* Force slider values, ticks, and min/max numbers to bright white */
+div[data-testid="stSliderTickBarMin"],
+div[data-testid="stSliderTickBarMax"],
+div[data-testid="stSlider"] div[data-testid="stMarkdownContainer"] p,
+div[data-testid="stSlider"] span {
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+}
+
+/* Ensure dropdown options and input boxes are clear and legible */
+div[data-baseweb="select"] > div {
+    background-color: #1e293b !important;
+    color: #FFFFFF !important;
+    border: 1px solid #334155 !important;
+}
+div[data-baseweb="select"] span {
+    color: #FFFFFF !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -383,4 +414,5 @@ with tab2:
                 else:
                     st.error(f"❌ አልተመለሰም (Incorrect). ትክክለኛ መልስ: **{item['ans']}** | ማብራሪያ: {item['exp']}")
             st.markdown("---")
+
 
