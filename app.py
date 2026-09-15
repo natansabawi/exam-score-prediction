@@ -11,37 +11,98 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# HIGH-CONTRAST CSS
+# HIGH-CONTRAST CSS & UI CARDS
 # -----------------------------------------------------------------------------
 st.markdown("""
 <style>
+/* Main Action Button */
 button[data-testid="baseButton-secondary"],
 button[data-testid="baseButton-primary"],
 .stButton > button {
-    background-color: #2563eb !important;
+    background-color: #1d4ed8 !important;
     background-image: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
     color: #ffffff !important;
-    border: 2px solid #60a5fa !important;
+    border: 2px solid #3b82f6 !important;
     border-radius: 8px !important;
-    padding: 0.8rem 1.5rem !important;
-    font-size: 1.2rem !important;
-    font-weight: 800 !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
     width: 100% !important;
     cursor: pointer !important;
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5) !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4) !important;
 }
 
 button[data-testid="baseButton-secondary"] *,
 button[data-testid="baseButton-primary"] *,
 .stButton > button * {
     color: #ffffff !important;
-    font-weight: 800 !important;
+    font-weight: 700 !important;
 }
+
+/* Result Main Card */
+.benchmark-card {
+    background-color: #0f172a;
+    border-left: 6px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.8rem 2rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.benchmark-card.tier-high { border-left-color: #ef4444; }
+.benchmark-card.tier-moderate { border-left-color: #f59e0b; }
+.benchmark-card.tier-accel { border-left-color: #10b981; }
+
+.benchmark-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #94a3b8;
+    text-transform: uppercase;
+}
+
+.benchmark-score {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.1;
+    margin: 0.3rem 0;
+}
+
+.benchmark-score span {
+    font-size: 1.5rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.benchmark-tier {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #e2e8f0;
+}
+
+/* Advice Cards */
+.advice-card {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.8rem;
+    color: #f8fafc;
+    font-size: 0.98rem;
+    line-height: 1.5;
+}
+
+.advice-card.warning { border-left: 4px solid #f59e0b; }
+.advice-card.danger { border-left: 4px solid #ef4444; }
+.advice-card.info { border-left: 4px solid #38bdf8; }
+.advice-card.success { border-left: 4px solid #10b981; }
 </style>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# MODEL LOADING / FALLBACK
+# PIPELINE LOADING / FALLBACK
 # -----------------------------------------------------------------------------
 MODEL_PATH = "models/exam_score_prediction_pipeline.joblib"
 
@@ -57,9 +118,9 @@ def get_pipeline():
 model_pipeline = get_pipeline()
 
 # -----------------------------------------------------------------------------
-# APP HEADER
+# APP HEADER & TABS
 # -----------------------------------------------------------------------------
-st.title("🎓 Intelligent Student Exam Performance Prediction & Early Warning System")
+st.title("🎓 Intelligent Student Exam Performance Prediction & Early Intervention")
 st.markdown("**የኢትዮጵያ ተሰጥኦና ተውህቦ ማበልጸጊያ ማዕከል (Ethiopian Giftedness & Talent Development Center)**")
 st.markdown("---")
 
@@ -71,15 +132,15 @@ with tab1:
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        hours = st.slider("Weekly Study Hours (የጥናት ሰዓት በሳምንት)", 1, 50, 18)
-        attendance = st.slider("Attendance Rate % (የትምህርት ቤት ገጽታ)", 40, 100, 80)
+        hours = st.slider("Weekly Study Hours (የጥናት ሰዓት)", 1, 50, 18)
+        attendance = st.slider("Attendance Rate % (የትምህርት ቤት ገጽታ)", 40, 100, 82)
         prev_scores = st.slider("Previous Cumulative Score % (ያለፈው ውጤት)", 30, 100, 68)
         tutoring = st.slider("Tutoring Sessions / Month (የማጠናከሪያ ክፍለ-ጊዜ)", 0, 10, 1)
         parental_inv = st.selectbox("Parental Involvement", ["Medium", "High", "Low"])
         access_res = st.selectbox("Access to Resources", ["Medium", "High", "Low"])
         
     with col2:
-        sleep = st.slider("Daily Sleep Hours (የእንቅልፍ ሰዓት በቀን)", 4, 12, 6)
+        sleep = st.slider("Daily Sleep Hours (የእንቅልፍ ሰዓት)", 4, 12, 6)
         phys_act = st.slider("Physical Activity (Days / Week)", 0, 7, 3)
         motivation = st.selectbox("Motivation Level", ["Medium", "High", "Low"])
         internet = st.selectbox("Internet Access at Home", ["Yes", "No"])
@@ -90,14 +151,13 @@ with tab1:
         teacher = st.selectbox("Teacher Quality Rating", ["Medium", "High", "Low"])
         extra = st.selectbox("Extracurricular Activities", ["Yes", "No"])
         learning_dis = st.selectbox("Special Learning Support Needs", ["No", "Yes"])
-        parent_edu = st.selectbox("Parental Education Level", ["High School", "College", "Postgraduate"])
+        parent_edu = st.selectbox("Parental Education", ["High School", "College", "Postgraduate"])
         distance = st.selectbox("Distance from Campus", ["Near", "Moderate", "Far"])
         gender = st.selectbox("Gender", ["Female", "Male"])
         family_income = st.selectbox("Family Income Tier", ["Medium", "High", "Low"])
 
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Check session state initialization
     if "predicted" not in st.session_state:
         st.session_state.predicted = False
 
@@ -137,55 +197,74 @@ with tab1:
             
         st.session_state.final_score = round(min(max(raw_pred, 0.0), 100.0), 1)
 
-    # RENDER RESULTS & DETAILED INTERVENTIONS
+    # SHOW RESULTS & COMPLETE ADVICE
     if st.session_state.predicted:
         score = st.session_state.final_score
-        st.markdown("---")
-        st.subheader("📊 የትንበያ ውጤት እና የትንተና ሪፖርት (Assessment Report)")
         
-        # Risk Tiers
-        res_col1, res_col2 = st.columns([1, 2])
-        with res_col1:
-            st.metric(label="የተገመተው አጠቃላይ ውጤት (Predicted Exam Score)", value=f"{score} / 100")
-            if score < 50.0:
-                st.error("🚨 ደረጃ፡ High Priority Intervention (ከፍተኛ አፋጣኝ ድጋፍ የሚሻ)")
-            elif score < 70.0:
-                st.warning("⚠️ ደረጃ፡ Moderate Monitoring (ተከታታይ ክትትል የሚያስፈልገው)")
-            else:
-                st.success("🎯 ደረጃ፡ Accelerated Track (የላቀና የተረጋጋ ደረጃ)")
-                
-        with res_col2:
-            st.markdown("#### 💡 ተግባራዊ የማስተካከያ የምክር ሃሳቦች (Actionable Interventions):")
+        if score < 50.0:
+            tier_label = "High Priority Intervention"
+            tier_class = "tier-high"
+            tier_amharic = "ከፍተኛ አፋጣኝ ድጋፍ የሚሻ"
+        elif score < 70.0:
+            tier_label = "Moderate Monitoring"
+            tier_class = "tier-moderate"
+            tier_amharic = "ተከታታይ ክትትል የሚያስፈልገው"
+        else:
+            tier_label = "Accelerated Track"
+            tier_class = "tier-accel"
+            tier_amharic = "የላቀና የተረጋጋ ደረጃ"
+
+        # Benchmark Card (Exactly like your UI layout with border glow)
+        st.markdown(f"""
+        <div class="benchmark-card {tier_class}">
+            <div class="benchmark-title">Predicted Exam Benchmark</div>
+            <div class="benchmark-score">{score} <span>/ 100</span></div>
+            <div class="benchmark-tier">Identified Tier: {tier_label} ({tier_amharic})</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("### 💡 Data-Driven Actionable Interventions (ተግባራዊ የምክር ሃሳቦች)")
+
+        advice_list = []
+        
+        if hours < 25:
+            advice_list.append({
+                "type": "warning",
+                "text": f"⏱️ <b>የጥናት ሰዓት ማሳደግ (Study Hours):</b> ተማሪው በሳምንት <b>{hours} ሰዓት</b> ብቻ ነው የሚያጠናው። የጥናት ሰዓት በሞዴሉ ላይ ከሁሉ በላይ ወሳኝ ተጽዕኖ ስላለው፣ ቢያንስ ወደ <b>25-30 ሰዓት</b> ማሳደግ ውጤቱን በቀጥታ በ8-12 ነጥብ ከፍ ያደርገዋል።"
+            })
             
-            # List of concrete rules
-            has_advice = False
+        if attendance < 85:
+            advice_list.append({
+                "type": "danger",
+                "text": f"🏫 <b>የትምህርት ቤት መገኘት (Attendance Rate):</b> የተማሪው የመገኘት ምጣኔ <b>{attendance}%</b> ነው። ከክፍል መቅረት ክፍተት ስለሚፈጥር ቢያንስ ወደ <b>90%+</b> እንዲደርስ መደረግ አለበት።"
+            })
             
-            if hours < 25:
-                st.warning(f"⏱️ **የጥናት ሰዓት ማነስ (Study Hours):** ተማሪው በአሁኑ ወቅት በሳምንት የሚያጠናው **{hours} ሰዓት** ብቻ ነው። የትንበያ ሞዴሉ እንደሚያሳየው ጥናት ከ85% በላይ ወሳኝ በመሆኑ፣ የጥናት ሰዓቱን ቢያንስ ወደ **25-30 ሰዓት** ማሳደግ ውጤቱን በቀጥታ በከፍተኛ ሁኔታ ይጨምረዋል።")
-                has_advice = True
-                
-            if attendance < 85:
-                st.error(f"🏫 **የትምህርት ቤት መገኘት (Attendance):** የተማሪው የትምህርት ገጽታ **{attendance}%** ነው። ከክፍል መቅረት የትምህርት ክፍተትን ስለሚፈጥር ቢያንስ **90% እና ከዚያ በላይ** እንዲገኝ የቅርብ ክትትል ያስፈልጋል።")
-                has_advice = True
-                
-            if sleep < 7:
-                st.info(f"😴 **የእንቅልፍ ማስተካከያ (Sleep Schedule):** በቀን **{sleep} ሰዓት** ብቻ መተኛት የተማሪውን የማስታወስና የማስተዋል (Cognitive) ብቃት ይቀንሳል። በቀን ቢያንስ **7-8 ሰዓት** እንዲተኛ የጊዜ ሰሌዳውን ማስተካከል ይገባል።")
-                has_advice = True
-                
-            if tutoring == 0 and score < 68:
-                st.warning("👨‍🏫 **ተጨማሪ የማጠናከሪያ ድጋፍ (Tutoring):** ተማሪው ምንም አይነት ተጨማሪ የማጠናከሪያ ድጋፍ የለውም። በሳምንት 1 ወይም በወር **2-3 የማጠናከሪያ ክፍለ-ጊዜዎች** ቢመቻቹ ውጤቱን ያሻሽለዋል።")
-                has_advice = True
-                
-            if prev_scores < 65:
-                st.info(f"📖 **የቀደሙ ክፍተቶችን መሙላት (Foundational Review):** ያለፈው ውጤት **{prev_scores}%** ስለነበረ፣ አዳዲስ ትምህርቶችን ከመማሩ በፊት የቀደሙ መሰረታዊ ፅንሰ-ሀሳቦችን መከለስ ይኖርበታል።")
-                has_advice = True
-                
-            if motivation == "Low":
-                st.warning("🔥 **የስነ-ልቦና እና የሞራል ማነቃቂያ (Motivation):** የተማሪው ተነሳሽነት ዝቅተኛ ደረጃ ላይ ይገኛል። ከአማካሪ መምህራን ጋር በመነጋገር የትምህርት ግብ እንዲያወጣ መደረግ አለበት።")
-                has_advice = True
-                
-            if not has_advice:
-                st.success("🌟 **ምርጥ አፈፃፀም (Excellent Standing):** ተማሪው በአሁኑ ሰዓት ሙሉና ሚዛናዊ የሆነ የጥናትና የስነ-ባህሪ ሁኔታ ላይ ይገኛል። ይህንን ጠብቆ እንዲቀጥል የፈተና ጥያቄዎችን በጊዜ ሰሌዳ መስራት ላይ እንዲያተኩር ይበረታታል።")
+        if sleep < 7:
+            advice_list.append({
+                "type": "info",
+                "text": f"😴 <b>የእንቅልፍ ሰዓት ማስተካከል (Sleep Hours):</b> በቀን <b>{sleep} ሰዓት</b> ብቻ መተኛት የአዕምሮን የማስታወስ እና የማስተዋል አቅም ያዳክማል። በቀን ቢያንስ <b>7-8 ሰዓት</b> መተኛት ይገባዋል።"
+            })
+            
+        if tutoring <= 1 and score < 70:
+            advice_list.append({
+                "type": "warning",
+                "text": f"👨‍🏫 <b>ተጨማሪ የማጠናከሪያ ትምህርት (Tutoring Support):</b> ተማሪው በወር የሚያገኘው የማጠናከሪያ ክፍለ-ጊዜ <b>{tutoring}</b> ብቻ ነው። በወር <b>3-4 ጊዜ</b> የተጠናከረ ድጋፍ ቢያገኝ ውጤቱ ወደ Accelerated Track ይሸጋገራል።"
+            })
+            
+        if prev_scores < 70:
+            advice_list.append({
+                "type": "info",
+                "text": f"📖 <b>የቀደሙ ክፍተቶችን መከለስ (Foundational Revision):</b> ያለፈው ውጤት <b>{prev_scores}%</b> ስለሆነ፣ አዳዲስ ምዕራፎችን ከመማሩ በፊት የቀደሙ የፈተና ጥያቄዎችን በደንብ መለማመድ አለበት።"
+            })
+            
+        if not advice_list:
+            advice_list.append({
+                "type": "success",
+                "text": "🌟 <b>ምርጥ አፈፃፀም (Optimal Routine):</b> ተማሪው ሙሉ እና የተመጣጠነ የጥናትና የስነ-ባህሪ ሁኔታ ላይ ይገኛል። ይህንን ጠብቆ እንዲቀጥል የጊዜ ሰሌዳውን ጠብቆ እንዲለማመድ ይበረታታል።"
+            })
+
+        for adv in advice_list:
+            st.markdown(f'<div class="advice-card {adv["type"]}">{adv["text"]}</div>', unsafe_allow_html=True)
 
 with tab2:
     st.subheader("📚 Grade 12 National Diagnostic Exam Bank")
